@@ -25,6 +25,16 @@
 - Apple《Adopting Liquid Glass》(WWDC25)
 - Web `feDisplacementMap` / `backdrop-filter` — MDN
 
+## 厂商实践(docs/06 依据)
+- 酷安 v16.6.2 APK 逆向(自持样本):`com.coolapk.market.widget.compose.liquid.*` 26 个 Kotlin 文件、
+  `com.coolapk.liquidglass` 资源库、Kyant0 谱系 AGSL shader 逐字比对
+- 酷安 16.2.4+「液态玻璃/沉浸光感」悬浮底栏更新(IT之家 / App Store 更新日志)
+- 腾讯 Kuikly 液态玻璃组件文档 — https://kuikly.tds.qq.com/API/components/liquid-glass.html
+  及官方博客《腾讯开源框架 Kuikly 再升级!率先适配"液态玻璃"》(2025-09-16)
+- TDesign Tabbar 悬浮胶囊液态玻璃讨论 — https://github.com/Tencent/tdesign-common/issues/2571
+- QWEA0/Liquid-Glass-Android(View 体系)— https://github.com/QWEA0/Liquid-Glass-Android
+- ROM 厂商设计动向:OriginOS 6(动态透彩)/ ColorOS 16 / HyperOS 3(综合知乎、安兔兔、36氪等公开报道)
+
 ## 本仓库产物与来源关系
 | 路径 | 性质 | 来源/许可 |
 |---|---|---|

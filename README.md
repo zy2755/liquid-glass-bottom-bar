@@ -18,7 +18,8 @@ iOS 26 的 Liquid Glass 底栏 = 一块**实时采样背后内容的玻璃胶囊
 │   ├── 02-Android-Compose.md        NPatch 生产级 & Kyant0 教学级两条路线
 │   ├── 03-Web.md                    liquid-glass-web 技术移植到底栏
 │   ├── 04-参数速查表.md             ★ 三平台参数对照(核心资产)
-│   └── 05-降级与兼容.md             API 分级 / 浏览器兼容 / 无障碍兜底
+│   ├── 05-降级与兼容.md             API 分级 / 浏览器兼容 / 无障碍兜底
+│   └── 06-厂商实践篇.md             ★ 酷安 v16 逆向 + Kuikly(QQ)/ROM 厂商做法
 ├── android/
 │   ├── compose-miuix/               生产级:NPatch 底栏完整源码(GPL-3.0,见 NOTICE)
 │   │   ├── FloatingGlassBottomBar.kt   ← 三层玻璃结构 + 阻尼拖拽指示器
