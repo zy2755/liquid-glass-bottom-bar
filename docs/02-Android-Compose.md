@@ -60,6 +60,8 @@ effects = {
     if (!isGlassTransparent) {
         vibrancy(); blur(liquidGlassBlurRadius.toPx())
         lens(refractionHeight = 24.dp.toPx(), refractionAmount = 24.dp.toPx())
+        // ⚠️ 24dp 是 NPatch 的选择(边缘弯曲带厚,中心平坦区仅剩 16dp,扭曲感强);
+        //    带文字标签的底栏建议 12~16dp 起步,更接近 iOS 26 "大平中心+薄边缘圈"(见 docs/04 表头说明)
     }
 },
 highlight = { baseHighlight.copy(alpha = 0.75f) },   // 镜面高光(BloomStroke 双光源)

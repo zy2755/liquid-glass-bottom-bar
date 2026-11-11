@@ -1,9 +1,12 @@
 # Liquid Glass Bottom Bar — 底栏液态玻璃跨软件可复用方案
 
-> 从三个真实来源提炼出的、可直接落地的「底栏液态玻璃」处理方案:
+![demo](docs/img/demo.gif)
+
+> 上图:Web 演示实时录制 —— 底栏对滚动内容的**真折射**(SVG 位移贴图,非毛玻璃贴图),tab 弹簧切换。
+> 从三个真实来源提炼、可直接落地的「底栏液态玻璃」处理方案:
 > **① NPatch 管理器**(生产级 Android Compose 实现,APK 逆向 + 源码核对)·
 > **② [xiaofangstudio/liquid-glass-web](https://github.com/xiaofangstudio/liquid-glass-web)**(Web 端 SVG 位移贴图折射)·
-> **③ [Kyant0/AndroidLiquidGlass](https://github.com/Kyant0/AndroidLiquidGlass)** 路线的教学 Demo(本项目空间验证过)。
+> **③ [Kyant0/AndroidLiquidGlass](https://github.com/Kyant0/AndroidLiquidGlass)** 路线的教学 Demo(配套可运行工程)。
 
 iOS 26 的 Liquid Glass 底栏 = 一块**实时采样背后内容的玻璃胶囊**:
 `背景采样 → 提饱和 → 磨砂 → 边缘折射 → 色散 → 表面高光/内阴影 → 交互动效`。
@@ -20,15 +23,18 @@ iOS 26 的 Liquid Glass 底栏 = 一块**实时采样背后内容的玻璃胶囊
 │   ├── 04-参数速查表.md             ★ 三平台参数对照(核心资产)
 │   ├── 05-降级与兼容.md             API 分级 / 浏览器兼容 / 无障碍兜底
 │   ├── 06-厂商实践篇.md             ★ 酷安 v16 逆向 + Kuikly(QQ)/ROM 厂商做法
-│   └── 07-谱系考.md                 GitHub 液态玻璃项目谱系实测(Kyant0 是枢纽不是源头)
+│   ├── 07-谱系考.md                 GitHub 液态玻璃项目谱系实测(Kyant0 是枢纽不是源头)
+│   └── img/                         演示 GIF 与截图
 ├── android/
-│   ├── compose-miuix/               生产级:NPatch 底栏完整源码(GPL-3.0,见 NOTICE)
-│   │   ├── FloatingGlassBottomBar.kt   ← 三层玻璃结构 + 阻尼拖拽指示器
-│   │   └── liquid/                     Lens / InnerShadow / Vibrancy / CombinedBackdrop
-│   └── compose-backdrop/
-│       └── GlassBottomBar.kt        教学级:Kyant0 backdrop 库 30 行配方
+│   ├── sample-app/                  ✅ 可一键运行的完整 Gradle 工程(Android Studio 直接 Run)
+│   ├── compose-backdrop/
+│   │   └── GlassBottomBar.kt        教学级:Kyant0 backdrop 库 30 行配方
+│   └── compose-miuix/               生产级:NPatch 底栏完整源码(GPL-3.0,见目录内 README/LICENSE)
+│       ├── FloatingGlassBottomBar.kt   ← 三层玻璃结构 + 阻尼拖拽指示器
+│       ├── liquid/                     Lens / InnerShadow / Vibrancy / CombinedBackdrop
+│       └── miuix/                      animation(DampedDragAnimation/InteractiveHighlight)+ modifier
 ├── web/
-│   └── bottombar-liquid-glass.html  自包含演示:双击浏览器直接打开(Chromium)
+│   └── bottombar-liquid-glass.html  ✅ 自包含演示:双击浏览器直接打开(Chromium)
 └── reference/
     ├── npatch-apk-逆向分析.md       APK 逆向证据链与分析方法论
     ├── 调研报告-LiquidGlass-Android实现方案.md   Android 生态全库调研
@@ -57,6 +63,7 @@ iOS 26 的 Liquid Glass 底栏 = 一块**实时采样背后内容的玻璃胶囊
 **3. 交互与光效的可复用参数**(详见 [docs/04-参数速查表.md](docs/04-参数速查表.md)):
 
 - 面板玻璃:`blur 4dp` + `lens(24dp, 24dp)`;指示器按压时 `lens(10dp·p, 14dp·p)` + 色散 `0.5`(p = 按压进度);
+- ⚠️ 观感取舍:`lens(refractionHeight)` 是"边缘弯曲带"厚度 —— 24dp 在 64dp 高的面板上意味着中心平坦区只剩 16dp,背景扭曲感强;**带文字的底栏建议 12~16dp 起步**(Kyant0 demo 的 16dp 更接近 iOS 26 观感);
 - 按压联动:tab 缩放 `1→1.2`、内阴影 `0→8dp`、面板微膨胀 `+16dp/width`;
 - 拖拽跟手:阻尼动画 + 橡皮筋 `4dp·EaseOut` + 速度挤压 `scaleX/=1-0.75v`、`scaleY*=1-0.25v`;
 - 动态光:加速度计旋转镜面高光位置(双光源 BloomStroke)。
@@ -66,21 +73,29 @@ API 33+ 全效果 → API 31+ 磨砂(blur 25dp + 65% tint)→ 更低/无 backdro
 
 ## 快速开始
 
-**Android(教学级,30 行接入)** —— 用 [Kyant0/AndroidLiquidGlass](https://github.com/Kyant0/AndroidLiquidGlass)(Maven `io.github.kyant0:backdrop:2.0.1`):
+**① Web(30 秒看到效果)** —— 用 Chromium/Edge 打开 [`web/bottombar-liquid-glass.html`](web/bottombar-liquid-glass.html)
+(或直接双击本地文件),滚动页面、点 tab:底栏对背后内容实时折射 + 指示器弹簧切换。
+非 Chromium 自动降级毛玻璃;`prefers-reduced-motion` 下动画自动关闭。
+
+**② Android(一键运行)** —— 用 **Android Studio**(Ladybug+)打开 [`android/sample-app/`](android/sample-app),
+等 Gradle Sync 完成后点 Run(API 33+ 真机/模拟器有完整折射;31/32 自动降级磨砂)。
+依赖只有一个 Maven 包:`io.github.kyant0:backdrop:2.0.1`。
+
+**③ Android(30 行接入自己的工程)** —— 复制 [`android/compose-backdrop/GlassBottomBar.kt`](android/compose-backdrop/GlassBottomBar.kt):
 
 ```kotlin
 val backdrop = rememberLayerBackdrop { drawRect(surfaceColor); drawContent() }
 Content(Modifier.layerBackdrop(backdrop))          // 页面内容登记进采样
-GlassBottomBar(backdrop)                            // 见 android/compose-backdrop/
+GlassBottomBar(backdrop)                            // 底栏;列表尾部自己发 contentPadding
 ```
 
-**Android(生产级)** —— 直接取用 `android/compose-miuix/`(NPatch 同款,依赖 miuix-kmp 的 blur 模块),API 33+ 自动启用折射,否则按 `docs/05` 降级。
-
-**Web** —— 用 Chromium/Edge 打开 [`web/bottombar-liquid-glass.html`](web/bottombar-liquid-glass.html),滚动页面即可看到底栏对背后内容的实时折射。
+**④ Android(生产级参考)** —— [`android/compose-miuix/`](android/compose-miuix)(NPatch 同款,GPL-3.0):
+含拖拽跟手指示器(`DampedDragAnimation`)、交互高光、内阴影下陷、光谱色散等完整源码。
+注意:其依赖的 miuix blur 模块未发布 Maven,移植方式见该目录 README;**不要拿它当起点**,先跑 ②。
 
 ## 来源与许可
 
-- `android/compose-miuix/` 来自 [7723mod/NPatch](https://github.com/7723mod/NPatch)(GPL-3.0),文件头保留原始许可与移植说明;
-- `android/compose-backdrop/` 基于 [Kyant0/AndroidLiquidGlass](https://github.com/Kyant0/AndroidLiquidGlass) API(Apache-2.0)编写;
+- `android/compose-miuix/` 来自 [7723mod/NPatch](https://github.com/7723mod/NPatch)(GPL-3.0,目录内附 LICENSE),文件头保留原始许可与移植说明;
+- `android/compose-backdrop/` 与 `android/sample-app/` 基于 [Kyant0/AndroidLiquidGlass](https://github.com/Kyant0/AndroidLiquidGlass) API(Apache-2.0)编写;
 - Web 演示的折射引擎技术来自 [shuding/liquid-glass](https://github.com/shuding/liquid-glass)(MIT)与 [xiaofangstudio/liquid-glass-web](https://github.com/xiaofangstudio/liquid-glass-web)(MIT);
-- 本仓库原创文档与演示:MIT,详见 [LICENSE](LICENSE) 与 [NOTICE.md](NOTICE.md)。
+- 本仓库原创文档与演示:MIT,**仅适用于未被单独标注许可的文件**(scope 见 [LICENSE](LICENSE) 顶部与 [NOTICE.md](NOTICE.md))。

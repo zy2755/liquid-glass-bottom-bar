@@ -2,6 +2,10 @@ MIT License
 
 Copyright (c) 2026 hou33 (本仓库原创内容:docs/、web/、android/compose-backdrop/、reference/原创部分)
 
+【适用范围 / SCOPE】本 MIT 许可仅适用于本仓库中未被单独标注许可的文件。
+例外目录:android/compose-miuix/(含 android/sample-app 中的 GPL 相关说明)为 GPL-3.0,
+其许可见 android/compose-miuix/LICENSE 与 NOTICE.md。
+
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights

@@ -63,7 +63,7 @@
                 0 -10px 25px inset rgba(0,0,0,.15),/* 底部内阴影出"厚"感 */
                 0 1px 0 rgba(255,255,255,.35) inset; /* 顶部边缘高光 */
     display: flex; align-items: center;
-    padding: 4px; position: fixed;
+    padding: 4px;
     transition: transform .18s ease;
     user-select: none;
   }
@@ -82,6 +82,7 @@
     flex: 1; height: 100%; border: 0; background: none; color: rgba(255,255,255,.72);
     display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px;
     font-size: 11px; cursor: pointer; position: relative; z-index: 1;
+    min-width: 44px; min-height: 44px;             /* 最小命中区(docs/05 检查单) */
     transition: color .2s, transform .25s cubic-bezier(.22,1.4,.36,1);
   }
   .tab svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; }
@@ -96,6 +97,11 @@
   .glass-bar.fallback .tab { color: rgba(0,0,0,.55); }
   .glass-bar.fallback .tab.active { color: #111; }
   .glass-bar.fallback .indicator { background: rgba(255,255,255,.6); }
+
+  /* 尊重系统"减弱动态效果"(docs/05 检查单):关掉果冻/弹簧,直接到位 */
+  @media (prefers-reduced-motion: reduce) {
+    .glass-bar, .indicator, .tab { transition: none !important; }
+  }
 
   .hint {
     position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
@@ -114,20 +120,20 @@
 
 <div class="cards" id="cards"></div>
 
-<!-- 底栏本体 -->
+<!-- 底栏本体:tablist/tab + aria-selected(docs/05 无障碍检查单) -->
 <nav class="glass-bar" id="bar" aria-label="主导航">
-  <div class="indicator" id="indicator"></div>
-  <button class="tab active" data-i="0">
-    <svg viewBox="0 0 24 24"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/></svg>首页
+  <div class="indicator" id="indicator" aria-hidden="true"></div>
+  <button class="tab active" data-i="0" role="tab" aria-selected="true">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/></svg>首页
   </button>
-  <button class="tab" data-i="1">
-    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-3.8-3.8"/></svg>搜索
+  <button class="tab" data-i="1" role="tab" aria-selected="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="m20 20-3.8-3.8"/></svg>搜索
   </button>
-  <button class="tab" data-i="2">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c1.2-4 4-6 7-6s5.8 2 7 6"/></svg>我的
+  <button class="tab" data-i="2" role="tab" aria-selected="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c1.2-4 4-6 7-6s5.8 2 7 6"/></svg>我的
   </button>
-  <button class="tab" data-i="3">
-    <svg viewBox="0 0 24 24"><path d="M12 3v13"/><path d="m6.5 10.5 5.5 5.5 5.5-5.5"/><path d="M5 20h14"/></svg>下载
+  <button class="tab" data-i="3" role="tab" aria-selected="false">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v13"/><path d="m6.5 10.5 5.5 5.5 5.5-5.5"/><path d="M5 20h14"/></svg>下载
   </button>
 </nav>
 
@@ -230,8 +236,9 @@ function moveIndicator(el) {
 }
 tabs.forEach(t => {
   t.addEventListener('click', () => {
-    tabs.forEach(x => x.classList.remove('active'));
+    tabs.forEach(x => { x.classList.remove('active'); x.setAttribute('aria-selected', 'false'); });
     t.classList.add('active');
+    t.setAttribute('aria-selected', 'true');
     moveIndicator(t);
   });
 });

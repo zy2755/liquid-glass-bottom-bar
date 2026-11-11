@@ -9,10 +9,17 @@
   Adapted from compose-miuix-ui example (IosLiquidGlassNavigationBar)",GPL-3.0-only,
   Copyright (C) 2025-2026 InstallerX Revived contributors / NPatch contributors;
 - `liquid/{Lens,InnerShadow,Vibrancy,CombinedBackdrop}.kt` — 同仓库 GPL-3.0;
+- `miuix/animation/{DampedDragAnimation,InteractiveHighlight}.kt`、
+  `miuix/modifier/DragGestureInspector.kt` — 同仓库 GPL-3.0;
   其中 Lens 的圆角矩形 SDF 折射 shader 与 [Kyant0/AndroidLiquidGlass](https://github.com/Kyant0/AndroidLiquidGlass)
   (Apache-2.0)同源。
 
 **使用注意**:若在你的项目中复用本目录代码,衍生作品需遵循 GPL-3.0 开源。
+本目录附 [LICENSE](android/compose-miuix/LICENSE)(GPL-3.0 全文);根 LICENSE(MIT)不覆盖本目录。
+
+## android/sample-app/(MIT)
+完整 Gradle 工程(可一键运行),基于 [Kyant0/AndroidLiquidGlass backdrop 库](https://github.com/Kyant0/AndroidLiquidGlass)
+(库本身 Apache-2.0,Maven `io.github.kyant0:backdrop:2.0.1`)。
 
 ## android/compose-backdrop/(MIT)
 原创配方,调用 [Kyant0/AndroidLiquidGlass backdrop 库](https://github.com/Kyant0/AndroidLiquidGlass)
