@@ -108,6 +108,37 @@ FloatingGlassBottomBar(..., backdrop = backdrop,
     mode = if (enableGlass) LiquidGlass else None)
 ```
 
+### 已知坑:`radiusAt` 传错坐标系(上游同款,已提修)
+
+`liquid/Lens.kt` 的 shader 里,`radiusAt()` 是按**象限**选圆角半径的,所以它要的是
+**居中坐标**(相对于形状中心,x/y 可正可负)。但上游四个折射 shader 全部传了原始图层坐标:
+
+```glsl
+float2 centeredCoord = (coord + offset) - halfSize;
+float radius = radiusAt(coord, cornerRadii);   // ← 传了 coord,应为 centeredCoord
+```
+
+而原始 `coord` 的范围是 `[0, size]`,`coord.x >= 0.0` **恒为真**,
+于是函数恒定返回 `radii.z` —— **整个形状都用右下角半径**。
+
+**为什么没人发现**:胶囊和四角相等的圆角矩形,四个半径本来就是一个数,传错也看不出来。
+Kyant0 2.0.1 原版同样如此,这是全生态沿袭的隐患,不是某一家的移植失误。
+
+**什么时候会翻车**:只要四角半径不同。实测 320×64 的"上圆下方"sheet(`radii = 24,24,0,0`):
+
+| 形状 | 最大位移偏差 | 受影响像素 |
+|---|---|---|
+| 胶囊 32,32,32,32 | 0 px | 0% |
+| 上圆下方式 24,24,0,0 | **24.06 px** | 6.9% |
+| 非对称 12,24,0,36 | **24.06 px** | 11.0% |
+
+表现是折射带绕着一个**不存在的方角**走,而不是贴着圆角收进去 ——
+sheet / 抽屉 / 非对称卡片上会明显看歪。
+
+本仓库已修正(依赖 `centeredCoord` + 参数改名以固定契约),上游修复见
+[Kyant0/AndroidLiquidGlass#134](https://github.com/Kyant0/AndroidLiquidGlass/pull/134)。
+复现页与数值脚本:https://gist.github.com/zy2755/4b417d2e3a3c795aade17f7d9f913547
+
 ## 选型建议
 
 | 需求 | 选 |

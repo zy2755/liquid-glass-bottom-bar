@@ -74,12 +74,15 @@ private fun BackdropEffectScope.roundedRectCornerRadii(): FloatArray? {
 }
 
 private const val ROUNDED_RECT_SDF = """
-float radiusAt(float2 coord, float4 radii) {
-    if (coord.x >= 0.0) {
-        if (coord.y <= 0.0) return radii.y;
+float radiusAt(float2 centeredCoord, float4 radii) {
+    // 注意:必须传"居中"坐标。上游(含 Kyant0 2.0.1)误传了原始 coord,
+    // 而 coord.x 恒 >= 0,导致四角半径恒取右下角 —— 胶囊看不出来,
+    // 非对称圆角形状的折射带会绕成方角。详见 docs/02「已知坑」。
+    if (centeredCoord.x >= 0.0) {
+        if (centeredCoord.y <= 0.0) return radii.y;
         else return radii.z;
     } else {
-        if (coord.y <= 0.0) return radii.x;
+        if (centeredCoord.y <= 0.0) return radii.x;
         else return radii.w;
     }
 }
@@ -121,7 +124,7 @@ float circleMap(float x) {
 half4 main(float2 coord) {
     float2 halfSize = size * 0.5;
     float2 centeredCoord = (coord + offset) - halfSize;
-    float radius = radiusAt(coord, cornerRadii);
+    float radius = radiusAt(centeredCoord, cornerRadii);
 
     float sd = sdRoundedRect(centeredCoord, halfSize, radius);
     if (-sd >= refractionHeight) {
@@ -158,7 +161,7 @@ float circleMap(float x) {
 half4 main(float2 coord) {
     float2 halfSize = size * 0.5;
     float2 centeredCoord = (coord + offset) - halfSize;
-    float radius = radiusAt(coord, cornerRadii);
+    float radius = radiusAt(centeredCoord, cornerRadii);
 
     float sd = sdRoundedRect(centeredCoord, halfSize, radius);
     if (-sd >= refractionHeight) {
