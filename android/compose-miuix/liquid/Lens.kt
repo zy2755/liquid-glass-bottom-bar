@@ -73,11 +73,13 @@ private fun BackdropEffectScope.roundedRectCornerRadii(): FloatArray? {
     )
 }
 
+// 已知坑:radiusAt() 内部按象限取半径,必须传"居中"坐标。
+// 上游(含 Kyant0 2.0.1)误传了原始 coord,而 coord.x 恒 >= 0,
+// 导致四角半径恒取右下角 —— 胶囊四角相等看不出来,非对称圆角形状
+// 的折射带会绕成方角。详见 docs/02「已知坑」。
+// 注意:shader 字符串要尽量精简(会被编译进运行时),说明一律写在这里。
 private const val ROUNDED_RECT_SDF = """
 float radiusAt(float2 centeredCoord, float4 radii) {
-    // 注意:必须传"居中"坐标。上游(含 Kyant0 2.0.1)误传了原始 coord,
-    // 而 coord.x 恒 >= 0,导致四角半径恒取右下角 —— 胶囊看不出来,
-    // 非对称圆角形状的折射带会绕成方角。详见 docs/02「已知坑」。
     if (centeredCoord.x >= 0.0) {
         if (centeredCoord.y <= 0.0) return radii.y;
         else return radii.z;
